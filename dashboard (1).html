@@ -1,0 +1,250 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+ <head>
+  <title> New Document </title>
+  <meta name="Generator" content="EditPlus">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+ </head>
+
+ <body>
+  
+ </body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System - Admin Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        .content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .edit-btn, .delete-btn {
+            background-color: #ffa500;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .delete-btn {
+            background-color: red;
+        }
+
+        .add-book-form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .add-book-form input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .add-book-form label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <a href="#">Dashboard</a>
+        <a href="#">Books</a>
+        <a href="#">Manage Users</a>
+        <a href="#">Settings</a>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <h1>Books Management</h1>
+
+        <!-- Add New Book Form -->
+        <div class="add-book-form">
+            <h2>Add New Book</h2>
+            <form id="addBookForm">
+                <label for="bookName">Book Name:</label>
+                <input type="text" id="bookName" name="bookName" required>
+
+                <label for="authorName">Author Name:</label>
+                <input type="text" id="authorName" name="authorName" required>
+
+                <label for="bookCost">Cost:</label>
+                <input type="number" id="bookCost" name="bookCost" required>
+
+                <button type="submit" class="btn">Add Book</button>
+            </form>
+        </div>
+
+        <!-- Books Table -->
+        <h2>Existing Books</h2>
+        <table id="booksTable">
+            <thead>
+                <tr>
+                    <th>Book Name</th>
+                    <th>Author Name</th>
+                    <th>Cost</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Books will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Sample book data
+        let books = [
+            { id: 1, bookName: "The Great Gatsby", authorName: "F. Scott Fitzgerald", cost: 15 },
+            { id: 2, bookName: "1984", authorName: "George Orwell", cost: 20 }
+        ];
+
+        // Function to display books
+        function displayBooks() {
+            const tableBody = document.querySelector("#booksTable tbody");
+            tableBody.innerHTML = ''; // Clear table body
+
+            books.forEach(book => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${book.bookName}</td>
+                    <td>${book.authorName}</td>
+                    <td>${book.cost}</td>
+                    <td>
+                        <button class="edit-btn" onclick="editBook(${book.id})">Edit</button>
+                        <button class="delete-btn" onclick="deleteBook(${book.id})">Delete</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to add a new book
+        document.querySelector("#addBookForm").addEventListener("submit", function (e) {
+            e.preventDefault(); // Prevent form submission
+
+            const bookName = document.querySelector("#bookName").value;
+            const authorName = document.querySelector("#authorName").value;
+            const bookCost = document.querySelector("#bookCost").value;
+
+            const newBook = {
+                id: books.length + 1,
+                bookName: bookName,
+                authorName: authorName,
+                cost: parseFloat(bookCost)
+            };
+
+            books.push(newBook);
+            displayBooks();
+
+            // Clear form
+            document.querySelector("#addBookForm").reset();
+        });
+
+        // Function to edit a book
+        function editBook(bookId) {
+            const book = books.find(b => b.id === bookId);
+            if (book) {
+                const newName = prompt("Enter new book name:", book.bookName);
+                const newAuthor = prompt("Enter new author name:", book.authorName);
+                const newCost = prompt("Enter new cost:", book.cost);
+
+                book.bookName = newName;
+                book.authorName = newAuthor;
+                book.cost = parseFloat(newCost);
+                displayBooks();
+            }
+        }
+
+        // Function to delete a book
+        function deleteBook(bookId) {
+            books = books.filter(b => b.id !== bookId);
+            displayBooks();
+        }
+
+        // Initial display of books
+        displayBooks();
+    </script>
+</body>
+</html>
